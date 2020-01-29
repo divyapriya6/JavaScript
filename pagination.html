@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>POC</title>
+  <style>
+
+
+.table-header {
+    font-weight: bold;
+}
+
+.table_header_container {
+    display: flex;
+    align-items: center;
+    padding: 10px 10px;
+    justify-content: space-between;
+    border: 1px solid grey;
+}
+
+.td-container{
+    display: flex;
+    align-items: center;
+    padding: 10px 10px;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+}
+#record-limit {
+    padding: 5px;
+    margin: 10px;
+    float: right;
+}
+
+#grid-container {
+    clear: both;
+}
+
+#paginationContainer {
+    padding: 5px;
+    margin: 10px;
+    float: left;
+}
+
+.btn {
+    color: #fff;
+    border: none;
+    padding: 4px;
+    margin: 0 4px;
+    cursor: pointer;
+}
+
+
+</style>
+</head>
+
+<body>
+    <div id="container">
+       
+        <div class="table_header_container">
+            <span class="table-header">Name</span>
+                                                <span class="table-header">Age</span>
+            <span class="table-header">Collage</span>
+            <span class="table-header">Email</span>
+           
+        </div>
+        <div class="table-body-container" id="table-body"></div>
+           
+                                <div>
+        <span id="paginationContainer">
+            <button>1</button>
+            
+        </span>
+
+        <select name="limit" id="record-limit" onchange="onChangeLimit()">
+            <option value="1">1</option>            
+            <option value="3">3</option>            
+            <option value="5">5</option>
+
+        </select>
+    </div>
+    </div>
+    <script >
+                var tabledata = [
+  {
+    "Name": "Arun",
+                "Age": "19",
+    "Collage": "CIT",
+    "Email": "Arun@gmail.com"
+  },
+  {
+    "Name": "Vijaya",
+                "Age": "19",
+    "Collage": "ADPA",
+    "Email": "Vijay@gmail.com"
+  },
+  {
+    "Name": "Divya",
+                "Age": "19",
+    "Collage": "VIT",
+    "Email": "Divya@gmail.com"
+  },
+  {
+    "Name": "Tharun",
+                "Age": "19",
+    "Collage": "MIT",
+    "Email": "tharun@gmail.com"
+  },
+  {
+    "Name": "Barbe",
+                "Age": "19",
+    "Collage": "MIT",
+    "Email": "barber@gmail.com"
+  },
+  {
+    "Name": "Georgia",
+                "Age": "19",
+    "Collage": "MIT",
+    "Email": "georgi@gmail.com"
+  },
+  {
+    "Name": "Mckay",
+                "Age": "19",
+     "Collage": "BICOL",
+    "Email": "mckay@gmail.com"
+  },
+  {
+    "Name": "Georgia Mckay",
+                "Age": "19",
+    "Collage": "MIT",
+    "Email": "georgi@gmail.com"
+  },
+  {
+    "Name": "Georgia Mckay",
+                "Age": "19",
+    "Collage": "CIT",
+    "Email": "georgi@gmail.com"
+  }
+];
+var tableBody = document.getElementById("table-body");
+var paginationContainer = document.getElementById("paginationContainer");
+var paginationData = {
+  startIndex: 0,
+  lastIndex: 1,
+  paginationLimit: 0
+}
+var selectedstudentIndex;
+
+function pagination(pageLimit) {
+  paginationContainer.innerHTML = "";
+  paginationData.paginationLimit = Math.ceil(tabledata.length / pageLimit);
+  var paginationButton = "";
+  for (var paginationButtonIndex = 0; paginationButtonIndex < paginationData.paginationLimit; paginationButtonIndex++) {
+    var buttonValue = paginationButtonIndex + 1;
+    paginationButton += `<button id value="${buttonValue}" onclick="onPaginationChange(${buttonValue})">${buttonValue}</button>`
+  }
+  paginationContainer.innerHTML += `<span>${paginationButton}</span>`
+}
+
+function onPaginationChange(selectedPage) {
+  var pageLimitSelected = document.getElementById("record-limit").value;
+  populateData(tabledata.length, pageLimitSelected, selectedPage);
+}
+
+
+function getDataIndexWithPagination(dataLength, pageSize, selectedPage) {
+  pageSize = parseInt(pageSize);
+  var startIndex = (selectedPage - 1) * pageSize;
+  var lastIndex = Math.min((startIndex + pageSize - 1), dataLength - 1);
+  paginationData.startIndex = startIndex;
+  paginationData.lastIndex = lastIndex;
+  return paginationData;
+}
+
+function onChangeLimit() {
+  var pageLimitSelected = document.getElementById("record-limit").value;
+  pagination(pageLimitSelected);
+  populateData(tabledata.length, pageLimitSelected, 1);
+}
+
+function populateData(dataLength, pageSize, selectedPage) {
+  tableBody.innerHTML = "";
+  var pagination = getDataIndexWithPagination(dataLength, pageSize, selectedPage);
+  for (var studentIndex = pagination.startIndex; studentIndex <= pagination.lastIndex; studentIndex++) {
+    var student = tabledata[studentIndex];
+    var tableRowData = `<span>${student.Name}</span><span>${student.Age}</span><span>${student.Collage}</span><span>${student.Email}</span>`
+    var tdContainer = `<div class="td-container">${tableRowData}</div>`;
+    tableBody.innerHTML += tdContainer;
+
+  }
+}
+function initialise(pageSize) {
+  pagination(pageSize);
+  populateData(tabledata.length, pageSize, 1);
+}
+
+initialise(5);</script>
+</body>
+
+</html>
